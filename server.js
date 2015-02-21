@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('app');
+var app = require('./app');
 var debug = require('debug')('node-edison-server:server');
 var http = require('http');
 
@@ -19,7 +19,21 @@ app.set('port', port);
  * Create HTTP server.
  */
 
+console.log("TestKey: " + process.env.TestKey);
+console.log("RedisHostName: " + process.env.RedisHostName);
+console.log("RedisKey: " + process.env.RedisKey);
+
 var server = http.createServer(app);
+
+var io = require('socket.io')(server);
+var redishostname = process.env.RedisHostName;
+var rediskey = process.env.RedisKey;
+var pub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});
+var sub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});
+
+var redis = require('socket.io-redis');
+io.adapter(redis({pubClient: pub, subClient: sub}));
+
 
 /**
  * Listen on provided port, on all network interfaces.
