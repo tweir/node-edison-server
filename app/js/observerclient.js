@@ -2,27 +2,42 @@ define(["util","eddy"],function (util,eddy) {
     var eddyRepo = {};
     var oc = {};
 
-    function updateClientStatus(e){
-      /*var divSelector = '#client-'+e.id;
-      if ($(divSelector).length == 0){
-        $('#eddyclients').append("<div id='client-"+e.id+"'><div>Id:<span>"+e.id+"</span></div><div>Status:<span class='clientstatus'></span></div>");
-      } 
-      $(divSelector + ' .clientstatus').text(e.status);*/
-      //eddy.setStatus(e.sta)
-    }
-
     function connectClient(data){
-      var id = data.id;
-      var e = eddy.create(id,data.name);
+      var id = getClientId(data);
+      var name = getClientName(data);
+      var e = eddy.create(id,name);
       e.status = 'connected';
       eddyRepo[id]=e;
       e.ensureView();
     }
 
+    function getClientId(data){
+      return data.id.replace(/ /g,"_");
+    }
+
+    function getClientName(data){
+      if (data.name===undefined){
+        return data.id;
+      }
+      else
+      {
+        return data.name;
+      }
+    }
+
     function disconnectClient(data){
-      var id = data.id;
+      var id = getClientId(data);
       e = eddyRepo[id];
       e.setStatus('disconnected')
+    }
+
+    function handleEddyData(data)
+    {
+      var id = getClientId(data);
+      var sensorName = data.sensor;
+      var sensorValue = data.value;
+      e = eddyRepo[id];
+      e.setSensorValue(sensorName,sensorValue);
     }
 
     return {
@@ -46,6 +61,7 @@ define(["util","eddy"],function (util,eddy) {
           oc.socket.on('eddy_data',function(data) {
             console.log("Eddy data");
             console.log(data);
+            handleEddyData(data);
           });
           oc.socket.on()
         }
