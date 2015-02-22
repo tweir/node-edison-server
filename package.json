@@ -14,8 +14,7 @@
     "serve-favicon": "~2.2.0",
     "socket.io-redis":"*",
     "socket.io":"*",
-    "redis":"*",
-    "node-edison-client" : "git://github.com/tweir/node-edison-client.git"
+    "redis":"*"
   },
   "devDependencies": {
     "bower": "^1.3.9",
@@ -25,6 +24,7 @@
     "gulp-imagemin": "^0.5.1",
     "gulp-less": "^1.2.4",
     "gulp-uglify": "^0.3.1",
-    "requirejs": "^2.1.14"
+    "requirejs": "^2.1.14",
+    "node-edison-client" : "git://github.com/tweir/node-edison-client.git"
   }
 }
