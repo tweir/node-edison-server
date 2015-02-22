@@ -32,7 +32,7 @@ var server = http.createServer(app);
 server.on('error', onError);
 server.on('listening', onListening);
 
-var io = require('socket.io')(server);
+var io = require('socket.io').listen(server);
 var redishostname = process.env.RedisHostName;
 var rediskey = process.env.RedisKey;
 var pub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});
