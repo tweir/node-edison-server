@@ -4,11 +4,17 @@ var EddyClientRepo = function()
 }
 
 EddyClientRepo.prototype.addClient = function(client) {
+  console.log("Add client: " + client.id);
   this.clientsById[client.id] = client;
 }
 
 EddyClientRepo.prototype.getClientSocket = function(clientId) {
-  return this.clientsById[clientId].socket;
+  var client = this.clientsById[clientId];
+  if (client===undefined){
+    console.error("No client found: " + clientId);
+    return undefined;
+  }
+  return client.socket;
 }
 
 var inst = new EddyClientRepo();

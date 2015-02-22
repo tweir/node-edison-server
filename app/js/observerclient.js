@@ -40,6 +40,14 @@ define(["util","eddy"],function (util,eddy) {
       e.setSensorValue(sensorName,sensorValue);
     }
 
+    function createPingCommand(socket,data){
+      var id = data.id; //Use original id...
+      var command_data = {clientId:id, command:'ping'};
+      setInterval(function(){
+        socket.emit('send_eddy_command',command_data);
+      },5000);
+    }
+
     return {
         setup: function () {
           console.log("Ready (in OC)");
@@ -52,6 +60,7 @@ define(["util","eddy"],function (util,eddy) {
             console.log("Eddy connected");
             console.log(data);
             connectClient(data);
+            createPingCommand(oc.socket,data);
           });
           oc.socket.on('eddy_disconnected', function(data) {
             console.log("Eddy disconnected");
