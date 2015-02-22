@@ -25,6 +25,14 @@ console.log("RedisKey: " + process.env.RedisKey);
 
 var server = http.createServer(app);
 
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
 var io = require('socket.io')(server);
 var redishostname = process.env.RedisHostName;
 var rediskey = process.env.RedisKey;
@@ -61,13 +69,6 @@ io.on('connection', function (socket) {
   });
 });
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
