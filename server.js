@@ -34,6 +34,32 @@ var sub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey
 var redis = require('socket.io-redis');
 io.adapter(redis({pubClient: pub, subClient: sub}));
 
+var webClientRepo = require('./models/webclientrepo');
+var eddyClientRepo = require('./models/eddyrepo');
+var EddyClient = require('./models/eddyclient');
+var WebClient = require('./models/webclient');
+
+io.on('connection', function (socket) {
+  socket.on('init', function(data){
+    console.log("Init");
+    console.log(data);
+    if(data.clientType=='eddy')
+    {
+      var eddy = new EddyClient(socket,data);
+      eddyClientRepo.addClient(eddy);
+      webClientRepo.eddyConnected(eddy);
+    }
+    if (data.clientType=='web')
+    {
+      var webClient = new WebClient(socket);
+      webClientRepo.addClient(webClient);
+    }
+  });
+  socket.emit('welcome', { hello: 'world' });
+  socket.on('test', function (data) {
+    console.log(data);
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.

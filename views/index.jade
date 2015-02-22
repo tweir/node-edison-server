@@ -1,6 +1,27 @@
 extends layout
 
+block headContent
+  script(type='text/javascript').
+    $( document ).ready( function() {
+      console.log("Ready");
+      var socket = io(); 
+      socket.on('connect', function () { 
+        console.log("Connected");
+        socket.emit('init',{clientType:'web'});
+      });
+      socket.on('welcome', function(data) {
+        console.log("Welcome Message Received");
+        console.log(data);
+      });
+      socket.on('watcher', function(data) {
+        console.log("Eddy connected");
+        console.log(data);
+      });
+    });
+
 block content
   h1= title
   p Welcome to #{title}
   p Test Message: #{test}
+
+  #messages
