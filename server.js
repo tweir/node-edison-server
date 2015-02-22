@@ -47,20 +47,32 @@ var EddyClient = require('./models/eddyclient');
 var WebClient = require('./models/webclient');
 
 io.on('connection', function (socket) {
+
   socket.on('init', function(data){
     console.log("Init");
     console.log(data);
     if(data.clientType=='eddy')
     {
-      var eddy = new EddyClient(socket,data);
-      eddyClientRepo.addClient(eddy);
-      webClientRepo.eddyConnected(eddy);
+      client = new EddyClient(socket, data);
+      eddyClientRepo.addClient(client);
+
+      socket.broadcast.to('webclients').emit('eddy_connected',{id:client.id,data:data});
+      socket.on('disconnect', function(){
+        console.log("Eddy client " + client.id + " disconnected.");
+        socket.broadcast.to('webclients').emit('eddy_disconnected',{id:client.id});
+      });
+      socket.join('eddyclients');
     }
     if (data.clientType=='web')
     {
-      var webClient = new WebClient(socket);
-      webClientRepo.addClient(webClient);
+      client = new WebClient(socket, data);
+      webClientRepo.addClient(client);
+      socket.on('disconnect',  function(){
+        console.log("Web client " + client.id + " disconnected.");
+      });
+      socket.join('webclients');
     }
+    client.setData(data);
   });
   socket.emit('welcome', { hello: 'world' });
   socket.on('test', function (data) {

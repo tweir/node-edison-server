@@ -2,20 +2,52 @@ extends layout
 
 block headContent
   script(type='text/javascript').
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    }
+
+    function updateClientStatus(id,status){
+      var divSelector = '#client-'+id;
+      if ($(divSelector).length == 0){
+        $('#eddyclients').append("<div id='client-"+id+"'><div>Id:<span>"+id+"</span></div><div>Status:<span class='clientstatus'></span></div>");
+      } 
+      $(divSelector + ' .clientstatus').text(status);
+    }
+
+    function connectClient(data){
+      updateClientStatus(data.id,"connected");
+    }
+
+    function disconnectClient(data){
+      updateClientStatus(data.id,"disconnected");
+    }
+
     $( document ).ready( function() {
       console.log("Ready");
       var socket = io(); 
       socket.on('connect', function () { 
         console.log("Connected");
-        socket.emit('init',{clientType:'web'});
+        socket.emit('init',{clientType:'web',id:guid()});
       });
       socket.on('welcome', function(data) {
         console.log("Welcome Message Received");
         console.log(data);
       });
-      socket.on('watcher', function(data) {
+      socket.on('eddy_connected', function(data) {
         console.log("Eddy connected");
         console.log(data);
+        connectClient(data);
+      });
+      socket.on('eddy_disconnected', function(data) {
+        console.log("Eddy disconnected");
+        console.log(data);
+        disconnectClient(data);
       });
     });
 
@@ -24,4 +56,4 @@ block content
   p Welcome to #{title}
   p Test Message: #{test}
 
-  #messages
+  #eddyclients
