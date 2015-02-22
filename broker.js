@@ -5,6 +5,7 @@ var webClientRepo = require('./models/webclientrepo');
 var eddyClientRepo = require('./models/eddyrepo');
 
 var initSocketIO = function(server, redishostname, rediskey){
+  console.log("Connecting to redis server: "+redishostname+" "+rediskey);
   var io = require('socket.io').listen(server);
   var pub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});
   var sub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});

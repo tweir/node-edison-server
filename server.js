@@ -32,7 +32,7 @@ var server = http.createServer(app);
 server.on('error', onError);
 server.on('listening', onListening);
 
-var broker=require('./broker')(server);
+var broker=require('./broker')(server,process.env.RedisHostName,process.env.RedisKey);
 server.listen(port);
 
 /**
