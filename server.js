@@ -32,54 +32,7 @@ var server = http.createServer(app);
 server.on('error', onError);
 server.on('listening', onListening);
 
-var io = require('socket.io').listen(server);
-var redishostname = process.env.RedisHostName;
-var rediskey = process.env.RedisKey;
-var pub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});
-var sub = require('redis').createClient(6379,redishostname, {auth_pass: rediskey, return_buffers: true});
-
-var redis = require('socket.io-redis');
-io.adapter(redis({pubClient: pub, subClient: sub}));
-
-var webClientRepo = require('./models/webclientrepo');
-var eddyClientRepo = require('./models/eddyrepo');
-var EddyClient = require('./models/eddyclient');
-var WebClient = require('./models/webclient');
-
-io.on('connection', function (socket) {
-
-  socket.on('init', function(data){
-    console.log("Init");
-    console.log(data);
-    if(data.clientType=='eddy')
-    {
-      client = new EddyClient(socket, data);
-      eddyClientRepo.addClient(client);
-
-      socket.broadcast.to('webclients').emit('eddy_connected',{id:client.id,data:data});
-      socket.on('disconnect', function(){
-        console.log("Eddy client " + client.id + " disconnected.");
-        socket.broadcast.to('webclients').emit('eddy_disconnected',{id:client.id});
-      });
-      socket.join('eddyclients');
-    }
-    if (data.clientType=='web')
-    {
-      client = new WebClient(socket, data);
-      webClientRepo.addClient(client);
-      socket.on('disconnect',  function(){
-        console.log("Web client " + client.id + " disconnected.");
-      });
-      socket.join('webclients');
-    }
-    client.setData(data);
-  });
-  socket.emit('welcome', { hello: 'world' });
-  socket.on('test', function (data) {
-    console.log(data);
-  });
-});
-
+var broker=require('./broker')(server);
 server.listen(port);
 
 /**

@@ -13,6 +13,7 @@
     "serve-favicon": "~2.2.0",
     "socket.io-redis":"*",
     "socket.io":"*",
-    "redis":"*"
+    "redis":"*",
+    "node-edison-client" : "git://github.com/tweir/node-edison-client.git"
   }
 }
