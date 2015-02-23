@@ -6,9 +6,9 @@ define(["util","eddy"],function (util,eddy) {
       var id = getClientId(data);
       var name = getClientName(data);
       var e = eddy.create(id,name);
-      e.status = 'connected';
       eddyRepo[id]=e;
       e.ensureView();
+      e.setStatus('connected');
     }
 
     function getClientId(data){
