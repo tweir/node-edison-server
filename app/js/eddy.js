@@ -1,15 +1,15 @@
 define(function () {
     function clientTemplate(id,name,status)
     {
-      return "<div id='client-" + id + "' data-id='"+id+"'  >" +
+      return "<div id='client-" + id + "' data-id='"+id+"' class='client' >" +
              "<div><span class='client-name'>" + name + "</span></div>" +
-             "<div>Status:<span class='clientstatus'>"+status+"</span></div>" +
+             "<div><span class='clientstatus'>"+status+"</span></div>" +
              "<div class='client-sensors'></div>";
     }
 
     function sensorTemplate(id,name,currentValue){
       var divId = "sensor-"+id+"-"+name;
-      return "<div id='"+divId+"' >" +
+      return "<div id='"+divId+"' class='sensor'>" +
              "<span class='sensor_name'>" + name + "</span>" +
              "<span class='sensor_value'>" + currentValue + "</span" +
              "</div";

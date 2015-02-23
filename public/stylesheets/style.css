@@ -1,6 +1,41 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color:#1a65a5;
+}
+
+div.client {
+  background-color:white;
+  float:left;
+  width:200px;
+  padding:10px;
+}
+
+span.client-name {
+  display:block;
+  text-align: center;
+  font-size: 24px;
+}
+span.clientstatus {
+  display:block;
+  text-align: center;
+  font-size: 10px;
+}
+
+div.sensor {
+  clear:both;
+}
+
+span.sensor_name {
+  width:80px;
+  padding:0;
+  display:block;
+  float:left;
+}
+
+span.sensor_value {
+  display:block;
+  float:left;
 }
 
 a {
