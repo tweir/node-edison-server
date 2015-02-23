@@ -9,6 +9,7 @@ div.client {
   float:left;
   width:200px;
   padding:10px;
+  margin:10px;
 }
 
 span.client-name {
