@@ -40,6 +40,26 @@ define(["util","eddy"],function (util,eddy) {
       e.setSensorValue(sensorName,sensorValue);
     }
 
+    function updateEddyList(data){
+      for( var i=0; i<data.length; i++)
+      {
+        var d=data[i];
+        var id = getClientId(d);
+        var name = getClientName(d);
+        var e = eddy.create(id,name);
+        eddyRepo[id]=e;
+        e.ensureView();
+        e.setStatus(d.status);
+
+        for(var name in d.sensors) {
+          if(d.sensors.hasOwnProperty(name)){
+            e.setSensorValue(name,d.sensors[name]);
+          }
+        }
+      }
+
+    }
+
     function createPingCommand(socket,data){
       var id = data.id; //Use original id...
       var command_data = {clientId:id, command:'ping'};
@@ -61,6 +81,11 @@ define(["util","eddy"],function (util,eddy) {
             console.log(data);
             connectClient(data);
             createPingCommand(oc.socket,data);
+          });
+          oc.socket.on('current_eddy_list', function(data) {
+            console.log("Eddy list update");
+            console.log(data);
+            updateEddyList(data);
           });
           oc.socket.on('eddy_disconnected', function(data) {
             console.log("Eddy disconnected");

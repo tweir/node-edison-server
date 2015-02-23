@@ -23,6 +23,7 @@ function initEddyClient(socket, data){
 
   socket.broadcast.to('observers').emit('eddy_connected',{id:client.id,data:data});
   socket.on('disconnect', function(){
+    eddyClientRepo.setClientStatus(client.id,"disconnected");
     console.log("Eddy client " + client.id + " disconnected.");
     socket.broadcast.to('observers').emit('eddy_disconnected',{id:client.id});
   });
@@ -32,6 +33,10 @@ function initEddyClient(socket, data){
 function initWebClient(socket,data){
   client = new WebClient(socket, data);
   webClientRepo.addClient(client);
+  eddyList = eddyClientRepo.getAll();
+  console.log("sending current_eddy_list");
+  console.log(eddyList);
+  socket.emit('current_eddy_list',eddyList);
   socket.on('disconnect',  function(){
     console.log("Web client " + client.id + " disconnected.");
   });
@@ -66,6 +71,11 @@ function setupMessageRouting(io){
     socket.on('eddy_data', function(data){
       console.log("eddy_data");
       console.log(data);
+      var id = data.id;
+      var sensor = data.sensor;
+      var value = data.value;
+      eddyClientRepo.setSensorValue(id,sensor,value);
+
       socket.broadcast.to('observers').emit('eddy_data',data);
     });
     socket.on('send_eddy_command', function(data){
@@ -73,7 +83,10 @@ function setupMessageRouting(io){
       console.log(data);
 
       var eddySocket = eddyClientRepo.getClientSocket(data.clientId);
-      eddySocket.emit('command',data);
+      if(eddySocket!==undefined)
+      {
+        eddySocket.emit('command',data);
+      }
     });
   });
 }
